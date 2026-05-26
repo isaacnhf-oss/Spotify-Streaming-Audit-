@@ -43,6 +43,15 @@ El proyecto está desarrollado utilizando las siguientes herramientas y librerí
 
 ```
 
+## 🎯 Contexto del Proyecto
+
+
+* **Situación:** Catálogo de 2,000 canciones con métricas acústicas sin un criterio de selección claro.
+* **Complicación:** Datos de prestigio (Grammys) desconectados de los de rendimiento (Spotify).
+* **Pregunta:** ¿Cómo integrar y modelar estos datos para predecir la popularidad y segmentar las canciones en playlists *premium*?
+* **Respuesta:** Implementación de un flujo que incluye EDA con **Pandas**, consultas de segmentación en **DuckDB**, modelos de **Regresión** y **Clustering (K-Means)**, presentados en un **Dashboard interactivo**.
+
+
 ## Equipo y Roles
 
 ### 🎨 Isbeth Hernández 
