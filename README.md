@@ -41,6 +41,8 @@ El proyecto está desarrollado utilizando las siguientes herramientas y librerí
 ├── presentation/       # Presentación en formato Pitch Ejecutivo para negocio
 └── requirements.txt    # Dependencias y librerías del proyecto
 
+```
+
 ## Equipo y Roles
 
 ### 🎨 Isbeth Hernández 
