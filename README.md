@@ -32,7 +32,8 @@ El notebook principal del proyecto se encuentra en:
 
 `notebooks/Spotify_Hackathon_proyecto_final.ipynb`
 
-> Nota: si GitHub no renderiza correctamente el notebook `.ipynb`, revisar la versión HTML en `notebooks/Spotify_Hackathon_proyecto_final.html` o descargar el notebook para ejecutarlo localmente.
+> Nota: si GitHub no renderiza correctamente el notebook `.ipynb`, revisar la versión HTML en `notebooks/Spotify_Hackathon_proyecto_final.html` o descargar el notebook para ejecutarlo localmente. 
+> El cuaderno de desarrollo activo de EDA se encuentra en `notebooks/EDA_Dev.ipynb`. 
 
 ## 📂 Estructura del Proyecto
 
@@ -103,3 +104,5 @@ El notebook principal del proyecto se encuentra en:
 - Se entrenó un modelo de regresión para estimar `Popularity` a partir de atributos acústicos.
 - Se aplicó K-Means para segmentar canciones en perfiles o vibes musicales.
 - Se exportaron insumos para el dashboard en Tableau.
+
+
