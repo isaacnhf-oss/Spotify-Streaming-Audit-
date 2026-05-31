@@ -40,6 +40,12 @@ El notebook de limpieza de Grammy Awards se encuentra en:
 `notebooks/limpieza_grammy_awards.ipynb`
 
 > Nota: si GitHub no renderiza correctamente el notebook de limpieza, revisar la versión HTML en `notebooks/limpieza_grammy_awards.html` o descargar el notebook para ejecutarlo localmente.
+>
+> El notebook de limpieza de Spotify se encuentra en:
+
+`notebooks/limpieza_spotify.ipynb`
+
+> Nota: si GitHub no renderiza correctamente el notebook de limpieza, revisar la versión HTML en `notebooks/limpieza_spotify.html` o descargar el notebook para ejecutarlo localmente.
 
 ## 📂 Estructura del Proyecto
 
