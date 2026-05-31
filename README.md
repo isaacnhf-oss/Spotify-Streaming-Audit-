@@ -26,6 +26,13 @@ El proyecto está desarrollado utilizando las siguientes herramientas y librerí
 * **Control de Versiones:** `GitHub`
 
 ---
+📓 Notebook final
+
+El notebook principal del proyecto se encuentra en:
+
+`notebooks/Spotify_Hackathon_proyecto_final.ipynb`
+
+> Nota: si GitHub no renderiza correctamente el notebook `.ipynb`, revisar la versión HTML en `notebooks/Spotify_Hackathon_proyecto_final.html` o descargar el notebook para ejecutarlo localmente.
 
 ## 📂 Estructura del Proyecto
 
@@ -34,9 +41,9 @@ El proyecto está desarrollado utilizando las siguientes herramientas y librerí
 ├── data/
 │   ├── raw/            # Dataset original sin modificar
 │   └── processed/      # Datos limpios listos para análisis y modelado
-├── models/             # Moldelos predictivos
-├── notebooks/          # Notebooks de EDA, consultas SQL y modelos de ML
-├── src/                # Scripts necesarios para los ánalisis y generación de modelos
+├── models/             # Modelos predictivos
+├── notebooks/          # Notebooks del proyecto: incluye el notebook final, HTML de revisión, limpieza, EDA y modelos
+├── src/                # Scripts necesarios para los análisis y generación de modelos
 ├── visualizations/     # Gráficas e imágenes exportadas
 ├── presentation/       # Presentación en formato Pitch Ejecutivo para negocio
 └── requirements.txt    # Dependencias y librerías del proyecto
@@ -87,5 +94,12 @@ El proyecto está desarrollado utilizando las siguientes herramientas y librerí
   * Entrega de datasets limpios para el EDA y estructuración de consultas para la visualización.
   * Revisión de la limpieza del código, comentarios y aseguramiento de buenas prácticas de desarrollo.
 
-Resultados Clave
-Se completará al finalizar el análisis.
+## Resultados Clave
+
+- Se identificaron segmentos de alto rendimiento y zona crítica mediante `Popularity Score`.
+- Se analizaron géneros, décadas y atributos acústicos para definir criterios de priorización.
+- Se integró el dataset Grammy Awards como señal complementaria de prestigio musical.
+- Se implementaron consultas en DuckDB para responder preguntas de negocio.
+- Se entrenó un modelo de regresión para estimar `Popularity` a partir de atributos acústicos.
+- Se aplicó K-Means para segmentar canciones en perfiles o vibes musicales.
+- Se exportaron insumos para el dashboard en Tableau.
