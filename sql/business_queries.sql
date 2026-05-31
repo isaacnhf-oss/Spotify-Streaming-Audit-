@@ -1,46 +1,85 @@
 -- =====================================================
 -- Spotify Streaming Audit
 -- Business Queries - DA Ingeniería & SQL
--- Dataset registrado en DuckDB: spotify
--- Base: Spotify limpio + variables integradas con Grammy
+--
+-- Tablas esperadas en DuckDB:
+--   spotify         -> dataset limpio de Spotify con variables de EDA
+--   spotify_grammy  -> dataset integrado Spotify + Grammy + clusters
+--
+-- Estas queries están alineadas con el notebook final:
+-- notebooks/Spotify_Hackathon_proyecto_final.ipynb
 -- =====================================================
+
 
 --------------------------------------------------------
 -- QUERY 1
--- ¿Qué canciones tienen potencial premium?
+-- Candidatas premium
 --
 -- Pregunta de negocio:
--- ¿Qué canciones deberían incluirse en playlists premium?
+-- ¿Qué canciones deberían incluirse inicialmente
+-- en playlists premium?
 --
 -- Decisión:
--- Seleccionar canciones con Popularity Score
--- igual o superior a 72.
+-- Seleccionar canciones con Popularity Score >= 72,
+-- incorporando género, década, cluster musical
+-- e historial Grammy como señales complementarias.
 --------------------------------------------------------
 
 SELECT
-    artist,
     title,
+    artist,
     top_genre,
     year,
     decade,
     popularity,
+    cluster_name,
     artist_has_grammy_record
-FROM spotify
+FROM spotify_grammy
 WHERE popularity >= 72
 ORDER BY popularity DESC;
 
 
 --------------------------------------------------------
 -- QUERY 2
--- Segmentación del catálogo por cuartiles de Popularity.
+-- Segmentación del catálogo por década
 --
 -- Pregunta de negocio:
--- ¿Cómo se distribuye el catálogo entre canciones
--- de bajo, medio y alto rendimiento?
+-- ¿Qué décadas tienen mejor rendimiento promedio?
 --
 -- Decisión:
--- Comparar el 25% inferior y el 25% superior
--- para identificar diferencias de rendimiento.
+-- Determinar qué épocas musicales deberían tener mayor
+-- presencia en playlists premium.
+--------------------------------------------------------
+
+SELECT
+    decade,
+    COUNT(*) AS total_canciones,
+    ROUND(AVG(popularity), 2) AS popularity_promedio,
+    ROUND(MEDIAN(popularity), 2) AS popularity_mediana,
+    ROUND(
+        100.0 * SUM(CASE WHEN popularity >= 72 THEN 1 ELSE 0 END) / COUNT(*),
+        2
+    ) AS tasa_premium_pct,
+    ROUND(
+        100.0 * SUM(CASE WHEN popularity <= 49 THEN 1 ELSE 0 END) / COUNT(*),
+        2
+    ) AS tasa_zona_critica_pct
+FROM spotify
+GROUP BY decade
+ORDER BY decade;
+
+
+--------------------------------------------------------
+-- QUERY 3
+-- Segmentación del catálogo por cuartiles de Popularity
+--
+-- Pregunta de negocio:
+-- ¿Qué caracteriza al 25% superior del catálogo
+-- frente al resto?
+--
+-- Decisión:
+-- Usar el cuartil superior como benchmark inicial
+-- para playlists premium.
 --------------------------------------------------------
 
 SELECT
@@ -59,14 +98,14 @@ ORDER BY popularity_quartile;
 
 
 --------------------------------------------------------
--- QUERY 3
--- Géneros con mayor rendimiento promedio.
+-- QUERY 4
+-- Géneros con mayor potencial premium
 --
 -- Pregunta de negocio:
--- ¿Qué géneros presentan mejor desempeño dentro del catálogo?
+-- ¿Qué géneros combinan alto rendimiento y volumen suficiente?
 --
 -- Decisión:
--- Priorizar géneros de alto rendimiento en playlists premium,
+-- Priorizar géneros sólidos para playlists premium,
 -- recomendaciones y campañas.
 --------------------------------------------------------
 
@@ -74,6 +113,7 @@ SELECT
     top_genre,
     COUNT(*) AS total_canciones,
     ROUND(AVG(popularity), 2) AS popularity_promedio,
+    ROUND(MEDIAN(popularity), 2) AS popularity_mediana,
     ROUND(
         100.0 * SUM(CASE WHEN popularity >= 72 THEN 1 ELSE 0 END) / COUNT(*),
         2
@@ -90,50 +130,23 @@ LIMIT 10;
 
 
 --------------------------------------------------------
--- QUERY 4
--- Segmentación del catálogo por década.
---
--- Pregunta de negocio:
--- ¿Qué décadas tienen mejor rendimiento promedio?
---
--- Decisión:
--- Determinar qué épocas musicales deberían tener mayor
--- presencia en playlists premium.
---------------------------------------------------------
-
-SELECT
-    decade,
-    COUNT(*) AS total_canciones,
-    ROUND(AVG(popularity), 2) AS popularity_promedio,
-    ROUND(
-        100.0 * SUM(CASE WHEN popularity >= 72 THEN 1 ELSE 0 END) / COUNT(*),
-        2
-    ) AS tasa_premium_pct,
-    ROUND(
-        100.0 * SUM(CASE WHEN popularity <= 49 THEN 1 ELSE 0 END) / COUNT(*),
-        2
-    ) AS tasa_zona_critica_pct
-FROM spotify
-GROUP BY decade
-ORDER BY popularity_promedio DESC;
-
-
---------------------------------------------------------
 -- QUERY 5
--- Historial Grammy como señal secundaria.
+-- Historial Grammy como señal secundaria
 --
 -- Pregunta de negocio:
--- ¿Los artistas con historial Grammy presentan mayor Popularity?
+-- ¿Las canciones de artistas con historial Grammy
+-- presentan mejor rendimiento promedio?
 --
 -- Decisión:
--- Evaluar si Grammy puede usarse como criterio complementario
--- en la selección premium.
+-- Evaluar si Grammy puede utilizarse como criterio
+-- complementario de prestigio, sin reemplazar Popularity.
 --------------------------------------------------------
 
 SELECT
     artist_has_grammy_record,
     COUNT(*) AS total_canciones,
     ROUND(AVG(popularity), 2) AS popularity_promedio,
+    ROUND(MEDIAN(popularity), 2) AS popularity_mediana,
     ROUND(
         100.0 * SUM(CASE WHEN popularity >= 72 THEN 1 ELSE 0 END) / COUNT(*),
         2
@@ -142,6 +155,41 @@ SELECT
         100.0 * SUM(CASE WHEN popularity <= 49 THEN 1 ELSE 0 END) / COUNT(*),
         2
     ) AS tasa_zona_critica_pct
-FROM spotify
+FROM spotify_grammy
 GROUP BY artist_has_grammy_record
+ORDER BY popularity_promedio DESC;
+
+
+--------------------------------------------------------
+-- QUERY 6
+-- Clusters de vibes musicales
+--
+-- Pregunta de negocio:
+-- ¿Qué perfiles musicales tienen mejor desempeño
+-- y podrían convertirse en playlists premium por vibe?
+--
+-- Decisión:
+-- Priorizar clusters con alta Popularity promedio,
+-- suficiente volumen y baja tasa de zona crítica.
+--------------------------------------------------------
+
+SELECT
+    cluster_name,
+    COUNT(*) AS total_canciones,
+    ROUND(AVG(popularity), 2) AS popularity_promedio,
+    ROUND(MEDIAN(popularity), 2) AS popularity_mediana,
+    ROUND(
+        100.0 * SUM(CASE WHEN popularity >= 72 THEN 1 ELSE 0 END) / COUNT(*),
+        2
+    ) AS tasa_premium_pct,
+    ROUND(
+        100.0 * SUM(CASE WHEN popularity <= 49 THEN 1 ELSE 0 END) / COUNT(*),
+        2
+    ) AS tasa_zona_critica_pct,
+    ROUND(
+        100.0 * SUM(CASE WHEN artist_has_grammy_record = TRUE THEN 1 ELSE 0 END) / COUNT(*),
+        2
+    ) AS artistas_grammy_pct
+FROM spotify_grammy
+GROUP BY cluster_name
 ORDER BY popularity_promedio DESC;
